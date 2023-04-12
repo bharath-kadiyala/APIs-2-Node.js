@@ -35,7 +35,7 @@ app.get("/books/", async (request, response) => {
       book
     ORDER BY
       book_id;`;
-  const booksArray = await db.all(getBooksQuery);
+  const booksArray = await app.all(getBooksQuery);
   response.send(booksArray);
 });
 
