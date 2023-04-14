@@ -35,7 +35,7 @@ app.get("/books/", async (request, response) => {
       book
     ORDER BY
       book_id;`;
-  const booksArray = await app.all(getBooksQuery);
+  const booksArray = await db.all(getBooksQuery);
   response.send(booksArray);
 });
 
@@ -43,17 +43,17 @@ app.get("/books/", async (request, response) => {
 app.get("/books/:bookId/", async (request, response) => {
   const { bookId } = request.params;
   const getBookQuery = `
-    SELECT
-        *
-    FROM
-        book
-    WHERE
-        book_id = ${bookId};`;
-  const book = await dp.get(getBookQuery);
-  response.send("book");
+    SELECT 
+        * 
+    FROM 
+        book 
+    WHERE 
+        book_id =  ${bookId}`;
+  const book = await db.get(getBookQuery);
+  response.send(book);
 });
 
-//Add Book API
+//Add Book
 
 app.post("/books/", async (request, response) => {
   const bookDetails = request.body;
@@ -88,14 +88,14 @@ app.post("/books/", async (request, response) => {
         '${onlineStores}'
       );`;
 
-  const dpResponse = await db.run(addBookQuery);
-  const bookId = dpResponse.lastId;
+  const dbResponse = await db.run(addBookQuery);
+  const bookId = dbResponse.lastID;
   response.send({ bookId: bookId });
 });
 
-//Update API
+//Update Book API
 
-app.put("/books/:bookId", async (request, response) => {
+app.put("/books/:bookId/", async (request, response) => {
   const { bookId } = request.params;
   const bookDetails = request.body;
   const {
@@ -131,33 +131,35 @@ app.put("/books/:bookId", async (request, response) => {
       book_id = ${bookId};`;
 
   await db.run(updateBookQuery);
-  response.send("Book updated successfully.!");
+  response.send("Book was updated successfully");
 });
 
-//Delete API
+//Delete Book API
 
 app.delete("/books/:bookId", async (request, response) => {
   const { bookId } = request.params;
   const deleteBookQuery = `
-    DELETE FROM
-        book
-    WHERE
-        book_id = ${bookId};`;
+    DELETE FROM 
+        book 
+    WHERE 
+        book_id = ${bookId}
+    `;
   await db.run(deleteBookQuery);
   response.send("Book was deleted successfully.!");
 });
 
-//Get particular Author
+//Author Books API
 
 app.get("/authors/:authorId/books/", async (request, response) => {
   const { authorId } = request.params;
   const getAuthorBooksQuery = `
     SELECT
-     *
-    FROM
-     book
-    WHERE
-      author_id = ${authorId};`;
+        * 
+    FROM 
+        book
+    WHERE 
+        author_id = ${authorId};
+    `;
   const booksArray = await db.all(getAuthorBooksQuery);
   response.send(booksArray);
 });
